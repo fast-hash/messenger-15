@@ -65,7 +65,7 @@ const consumeBackupCode = (user, code) => {
 
 const verifyAgainstSecret = (user, code) => {
   const activeSecret = decryptSafe(user.mfaTempSecret) || decryptSafe(user.mfaSecret);
-  if (activeSecret && authenticator.check(code, activeSecret)) {
+  if (activeSecret && authenticator.check(code, activeSecret, { window: 1 })) {
     return { verified: true, usedBackup: false };
   }
 
