@@ -30,6 +30,31 @@ export const login = async (payload) => {
   return data;
 };
 
+export const verifyMfaLogin = async ({ tempToken, code }) => {
+  const { data } = await httpClient.post('/api/auth/mfa/verify', { tempToken, code });
+  return data;
+};
+
+export const setupMfa = async () => {
+  const { data } = await httpClient.post('/api/auth/mfa/setup');
+  return data;
+};
+
+export const enableMfa = async (code) => {
+  const { data } = await httpClient.post('/api/auth/mfa/enable', { code });
+  return data;
+};
+
+export const disableMfa = async (code) => {
+  const { data } = await httpClient.post('/api/auth/mfa/disable', { code });
+  return data;
+};
+
+export const fetchBackupCodes = async () => {
+  const { data } = await httpClient.get('/api/auth/mfa/backup-codes');
+  return data;
+};
+
 export const logout = async () => {
   await httpClient.post('/api/auth/logout');
 };

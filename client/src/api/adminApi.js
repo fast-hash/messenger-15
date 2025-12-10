@@ -20,6 +20,11 @@ export const resetDeviceTrust = async (userId) => {
   return data;
 };
 
+export const resetUserMfa = async (userId) => {
+  const { data } = await httpClient.post(`/api/admin/users/${userId}/mfa/reset`);
+  return data;
+};
+
 export const listRegistrationRequests = async () => {
   const { data } = await httpClient.get('/api/admin/registration-requests');
   return data;
