@@ -29,6 +29,7 @@ import {
   disableUser as disableUserAdmin,
   enableUser as enableUserAdmin,
   resetDeviceTrust as resetDeviceTrustAdmin,
+  resetUserMfa as resetUserMfaAdmin,
   listRegistrationRequests,
   approveRegistrationRequest,
   rejectRegistrationRequest,
@@ -370,6 +371,20 @@ const ChatsPage = () => {
     });
   };
 
+  const handleResetMfa = (targetUser) => {
+    const name = targetUser.displayName || targetUser.username || targetUser.email;
+    openConfirm(`Сбросить MFA для пользователя ${name}?`, async () => {
+      try {
+        await resetUserMfaAdmin(targetUser.id);
+        await loadAdminUsers();
+        setManagementNotice(`MFA пользователя ${name} сброшена`);
+      } catch (error) {
+        // eslint-disable-next-line no-alert
+        alert('Не удалось сбросить MFA');
+      }
+    });
+  };
+
   const handleApproveRegistration = (request) => {
     const name = request.displayName || request.username || request.email;
     openConfirm(`Принять заявку ${name}?`, async () => {
@@ -453,6 +468,14 @@ const ChatsPage = () => {
               />
               Не беспокоить
             </label>
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={() => navigate('/security')}
+              style={{ marginRight: '0.5rem' }}
+            >
+              Безопасность
+            </button>
             <button
               type="button"
               className="secondary-btn"
@@ -654,6 +677,7 @@ const ChatsPage = () => {
         onDisableUser={handleDisableUserAdmin}
         onEnableUser={handleEnableUserAdmin}
         onAllowNextDevice={handleResetDeviceTrust}
+        onResetMfa={handleResetMfa}
         onApproveRequest={handleApproveRegistration}
         onRejectRequest={handleRejectRegistration}
         notice={managementNotice}

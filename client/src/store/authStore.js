@@ -23,13 +23,29 @@ export const useAuthStore = create((set) => ({
     }
   },
   async login(credentials) {
-    const { user, device } = await authApi.login(credentials);
+    const result = await authApi.login(credentials);
+    if (result.mfaRequired) {
+      return { mfaRequired: true, tempToken: result.tempToken };
+    }
+
+    const { user, device } = result;
     set({
       user,
       dndEnabled: user.dndEnabled || false,
       dndUntil: user.dndUntil || null,
       device: device || null,
     });
+    return { user, device };
+  },
+  async verifyMfaLogin({ tempToken, code }) {
+    const { user, device } = await authApi.verifyMfaLogin({ tempToken, code });
+    set({
+      user,
+      dndEnabled: user.dndEnabled || false,
+      dndUntil: user.dndUntil || null,
+      device: device || null,
+    });
+    return { user, device };
   },
   async register(payload) {
     const data = await authApi.register(payload);
@@ -46,5 +62,8 @@ export const useAuthStore = create((set) => ({
   async updatePreferences(preferences) {
     const { user } = await usersApi.updatePreferences(preferences);
     set({ user, dndEnabled: user.dndEnabled || false, dndUntil: user.dndUntil || null });
+  },
+  setUser(user) {
+    set({ user, dndEnabled: user?.dndEnabled || false, dndUntil: user?.dndUntil || null });
   },
 }));

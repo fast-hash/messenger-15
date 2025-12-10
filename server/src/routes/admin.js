@@ -7,6 +7,7 @@ const userService = require('../services/userService');
 const registrationService = require('../services/registrationService');
 const { getIo, getUserRoom } = require('../sockets');
 const { getRequestIp } = require('../utils/requestIp');
+const mfaService = require('../services/mfaService');
 
 const router = express.Router();
 
@@ -68,6 +69,19 @@ router.post(
       ipAddress: getRequestIp(req),
     });
     res.json({ user });
+  })
+);
+
+router.post(
+  '/users/:id/mfa/reset',
+  asyncHandler(async (req, res) => {
+    const user = await mfaService.resetMfaByAdmin({
+      targetUserId: req.params.id,
+      adminId: req.user.id,
+      ipAddress: getRequestIp(req),
+    });
+
+    res.json({ user: userService.toUserDto(user) });
   })
 );
 

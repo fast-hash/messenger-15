@@ -47,6 +47,7 @@ const ChatManagementModal = ({
   onDisableUser,
   onEnableUser,
   onAllowNextDevice,
+  onResetMfa,
   onApproveRequest,
   onRejectRequest,
   notice,
@@ -170,6 +171,14 @@ const ChatManagementModal = ({
                       <div className="group-card__meta">{item.email}</div>
                       <div className="group-card__meta">{formatRole(item.role)} · {item.department || 'Отдел не указан'}</div>
                       <div className="group-card__meta">Статус: {item.accessDisabled ? 'Доступ ограничен' : 'Активен'}</div>
+                      <div className="group-card__meta">
+                        MFA:{' '}
+                        {item.mfaEnabled ? (
+                          <span className="badge badge-success">2FA ON</span>
+                        ) : (
+                          <span className="badge">2FA OFF</span>
+                        )}
+                      </div>
                       {item.forceTrustNextDevice && (
                         <div className="group-card__meta">Следующее устройство будет доверенным автоматически</div>
                       )}
@@ -178,6 +187,11 @@ const ChatManagementModal = ({
                       <button type="button" className="secondary-btn" onClick={() => onAllowNextDevice(item)}>
                         Сброс доверия
                       </button>
+                      {item.mfaEnabled && (
+                        <button type="button" className="secondary-btn" onClick={() => onResetMfa(item)}>
+                          Сбросить MFA
+                        </button>
+                      )}
                       {item.accessDisabled ? (
                         <button type="button" className="primary-btn" onClick={() => onEnableUser(item)}>
                           Вернуть доступ
@@ -246,6 +260,7 @@ ChatManagementModal.propTypes = {
   onDisableUser: PropTypes.func,
   onEnableUser: PropTypes.func,
   onAllowNextDevice: PropTypes.func,
+  onResetMfa: PropTypes.func,
   onApproveRequest: PropTypes.func,
   onRejectRequest: PropTypes.func,
   notice: PropTypes.string,
@@ -266,6 +281,7 @@ ChatManagementModal.defaultProps = {
   onDisableUser: () => {},
   onEnableUser: () => {},
   onAllowNextDevice: () => {},
+  onResetMfa: () => {},
   onApproveRequest: () => {},
   onRejectRequest: () => {},
   notice: '',
