@@ -109,98 +109,100 @@ const SecurityPage = () => {
 
   return (
     <Layout header={header}>
-      <div className="card">
-        <div className="card__header">
-          <div>
-            <h3>Статус 2FA</h3>
-            <p className="muted">Дополнительная защита учетной записи через одноразовые коды.</p>
-          </div>
-          <div>
-            {user?.mfaEnabled ? (
-              <span className="badge badge-success">2FA ON</span>
-            ) : (
-              <span className="badge">2FA OFF</span>
-            )}
-          </div>
-        </div>
-
-        {message && <div className="form-success">{message}</div>}
-        {error && <div className="form-error">{error}</div>}
-
-        {!user?.mfaEnabled && (
-          <div className="grid two-cols">
+      <div className="page-container">
+        <div className="card">
+          <div className="card__header">
             <div>
-              <h4>Шаг 1. Создайте секрет</h4>
-              <p className="muted">Нажмите кнопку, чтобы сгенерировать секрет и QR-код для приложения (Google Authenticator, 1Password и др.).</p>
-              <button type="button" className="secondary-btn" onClick={startSetup} disabled={loading}>
-                Сгенерировать секрет
-              </button>
-              {setupInfo && (
-                <div className="card qr-card">
-                  <h5>QR-код для сканирования</h5>
-                  <img src={setupInfo.qrCodeDataURL} alt="QR для 2FA" className="qr-image" />
-                  <p className="muted">Ручной ввод: {setupInfo.secret}</p>
-                </div>
+              <h3>Статус 2FA</h3>
+              <p className="muted">Дополнительная защита учетной записи через одноразовые коды.</p>
+            </div>
+            <div>
+              {user?.mfaEnabled ? (
+                <span className="badge badge-success">2FA ON</span>
+              ) : (
+                <span className="badge">2FA OFF</span>
               )}
             </div>
-            <div>
-              <h4>Шаг 2. Подтвердите код</h4>
-              <p className="muted">Введите текущий код из приложения, чтобы включить защиту.</p>
-              <form onSubmit={handleEnable} className="stacked-form">
-                <input
-                  type="text"
-                  value={enableCode}
-                  onChange={(e) => setEnableCode(e.target.value.trim())}
-                  placeholder="6-значный код"
-                  maxLength={10}
-                  required
-                  disabled={loading}
-                />
-                <button type="submit" className="primary-btn" disabled={loading || !enableCode}>
-                  {loading ? 'Сохраняем...' : 'Включить 2FA'}
-                </button>
-              </form>
-            </div>
           </div>
-        )}
 
-        {user?.mfaEnabled && (
-          <div className="grid two-cols">
-            <div>
-              <h4>Резервные коды</h4>
-              <p className="muted">Сохраните эти коды в безопасном месте. Каждый код можно использовать один раз.</p>
-              <div className="backup-codes">
-                {backupCodes.map((code) => (
-                  <code key={code} className="backup-code">
-                    {code}
-                  </code>
-                ))}
-                {!backupCodes.length && <div className="muted">Нажмите кнопку, чтобы отобразить резервные коды.</div>}
-              </div>
-              <button type="button" className="secondary-btn" onClick={loadBackupCodes} disabled={loading}>
-                Показать резервные коды
-              </button>
-            </div>
-            <div>
-              <h4>Отключить 2FA</h4>
-              <p className="muted">Введите код из приложения или резервный код, чтобы отключить MFA.</p>
-              <form onSubmit={handleDisable} className="stacked-form">
-                <input
-                  type="text"
-                  value={disableCode}
-                  onChange={(e) => setDisableCode(e.target.value.trim())}
-                  placeholder="Код 2FA"
-                  maxLength={10}
-                  required
-                  disabled={loading}
-                />
-                <button type="submit" className="danger-btn" disabled={loading || !disableCode}>
-                  {loading ? 'Отключаем...' : 'Выключить 2FA'}
+          {message && <div className="form-success">{message}</div>}
+          {error && <div className="form-error">{error}</div>}
+
+          {!user?.mfaEnabled && (
+            <div className="grid two-cols">
+              <div>
+                <h4>Шаг 1. Создайте секрет</h4>
+                <p className="muted">Нажмите кнопку, чтобы сгенерировать секрет и QR-код для приложения (Google Authenticator, 1Password и др.).</p>
+                <button type="button" className="secondary-btn" onClick={startSetup} disabled={loading}>
+                  Сгенерировать секрет
                 </button>
-              </form>
+                {setupInfo && (
+                  <div className="card qr-card">
+                    <h5>QR-код для сканирования</h5>
+                    <img src={setupInfo.qrCodeDataURL} alt="QR для 2FA" className="qr-image" />
+                    <p className="muted">Ручной ввод: {setupInfo.secret}</p>
+                  </div>
+                )}
+              </div>
+              <div>
+                <h4>Шаг 2. Подтвердите код</h4>
+                <p className="muted">Введите текущий код из приложения, чтобы включить защиту.</p>
+                <form onSubmit={handleEnable} className="stacked-form">
+                  <input
+                    type="text"
+                    value={enableCode}
+                    onChange={(e) => setEnableCode(e.target.value.trim())}
+                    placeholder="6-значный код"
+                    maxLength={10}
+                    required
+                    disabled={loading}
+                  />
+                  <button type="submit" className="primary-btn" disabled={loading || !enableCode}>
+                    {loading ? 'Сохраняем...' : 'Включить 2FA'}
+                  </button>
+                </form>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {user?.mfaEnabled && (
+            <div className="grid two-cols">
+              <div>
+                <h4>Резервные коды</h4>
+                <p className="muted">Сохраните эти коды в безопасном месте. Каждый код можно использовать один раз.</p>
+                <div className="backup-codes">
+                  {backupCodes.map((code) => (
+                    <code key={code} className="backup-code">
+                      {code}
+                    </code>
+                  ))}
+                  {!backupCodes.length && <div className="muted">Нажмите кнопку, чтобы отобразить резервные коды.</div>}
+                </div>
+                <button type="button" className="secondary-btn" onClick={loadBackupCodes} disabled={loading}>
+                  Показать резервные коды
+                </button>
+              </div>
+              <div>
+                <h4>Отключить 2FA</h4>
+                <p className="muted">Введите код из приложения или резервный код, чтобы отключить MFA.</p>
+                <form onSubmit={handleDisable} className="stacked-form">
+                  <input
+                    type="text"
+                    value={disableCode}
+                    onChange={(e) => setDisableCode(e.target.value.trim())}
+                    placeholder="Код 2FA"
+                    maxLength={10}
+                    required
+                    disabled={loading}
+                  />
+                  <button type="submit" className="danger-btn" disabled={loading || !disableCode}>
+                    {loading ? 'Отключаем...' : 'Выключить 2FA'}
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </Layout>
   );
