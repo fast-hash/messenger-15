@@ -14,3 +14,8 @@ export const updateDeviceStatus = async (id, status) => {
   const { data } = await httpClient.patch(`/api/devices/${id}/status`, { status });
   return data;
 };
+
+export const deleteDevice = async (id) => {
+  const { data } = await httpClient.delete(`/api/devices/${id}`);
+  return data;
+};

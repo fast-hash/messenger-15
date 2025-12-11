@@ -1,7 +1,7 @@
 const express = require('express');
 const authMiddleware = require('../middleware/auth');
 const asyncHandler = require('../utils/asyncHandler');
-const { listUserDevices, updateDeviceStatus, toDeviceDto } = require('../services/deviceService');
+const { listUserDevices, updateDeviceStatus, deleteDevice, toDeviceDto } = require('../services/deviceService');
 const { getRequestIp } = require('../utils/requestIp');
 
 const router = express.Router();
@@ -35,6 +35,14 @@ router.patch(
       ipAddress: getRequestIp(req),
     });
     res.json({ device: updated });
+  })
+);
+
+router.delete(
+  '/:id',
+  asyncHandler(async (req, res) => {
+    const removed = await deleteDevice({ targetDeviceId: req.params.id, userId: req.user.id });
+    res.json({ device: removed });
   })
 );
 
