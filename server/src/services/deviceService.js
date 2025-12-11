@@ -136,10 +136,25 @@ const updateDeviceStatus = async ({ targetDeviceId, userId, status, actorId, ipA
   return toDeviceDto(device);
 };
 
+const deleteDevice = async ({ targetDeviceId, userId }) => {
+  const device = await Device.findOne({ _id: targetDeviceId, userId });
+
+  if (!device) {
+    const error = new Error('Device not found');
+    error.status = 404;
+    throw error;
+  }
+
+  await Device.deleteOne({ _id: targetDeviceId, userId });
+
+  return toDeviceDto(device);
+};
+
 module.exports = {
   registerOrUpdateDevice,
   listUserDevices,
   updateDeviceStatus,
   toDeviceDto,
   findDeviceForUser,
+  deleteDevice,
 };

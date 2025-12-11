@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { listDevices, updateDeviceStatus } from '../api/deviceApi';
+import { deleteDevice, listDevices, updateDeviceStatus } from '../api/deviceApi';
 import { useAuthStore } from '../store/authStore';
 import { formatMessageDate } from '../utils/dateUtils';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 const statusLabel = {
   trusted: 'Доверенное',
@@ -24,6 +25,7 @@ const DevicesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const currentDeviceId = useMemo(() => currentDevice?.deviceId || null, [currentDevice]);
 
@@ -137,6 +139,14 @@ const DevicesPage = () => {
                     >
                       Отозвать
                     </button>
+                    <button
+                      type="button"
+                      className="danger-btn"
+                      disabled={updating === item.id || item.deviceId === currentDeviceId}
+                      onClick={() => setConfirmDeleteId(item.id)}
+                    >
+                      Удалить запись
+                    </button>
                   </div>
                 </div>
               ))}
@@ -144,6 +154,24 @@ const DevicesPage = () => {
           </div>
         )}
       </div>
+      {confirmDeleteId && (
+        <ConfirmDialog
+          text="Вы действительно хотите удалить запись об устройстве (данные)? Запись всё равно останется в журнале аудита."
+          onConfirm={async () => {
+            setUpdating(confirmDeleteId);
+            try {
+              await deleteDevice(confirmDeleteId);
+              setDevices((prev) => prev.filter((device) => device.id !== confirmDeleteId));
+            } catch (err) {
+              setError('Не удалось удалить запись об устройстве');
+            } finally {
+              setUpdating(null);
+              setConfirmDeleteId(null);
+            }
+          }}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
     </Layout>
   );
 };
